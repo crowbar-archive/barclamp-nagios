@@ -21,27 +21,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+def redhat_platform?
+  ["redhat","centos","fedora"].include?(platform)
+end
+
 set[:nagios][:dir]       = "/etc/nagios3"
-set[:nagios][:dir]       = "/etc/nagios" if platform?("redhat", "centos", "fedora")
+set[:nagios][:dir]       = "/etc/nagios" if redhat_platform?
 set[:nagios][:log_dir]   = "/var/log/nagios3"
-set[:nagios][:log_dir]   = "/var/log/nagios" if platform?("redhat", "centos", "fedora")
+set[:nagios][:log_dir]   = "/var/log/nagios" if redhat_platform?
 set[:nagios][:cache_dir] = "/var/cache/nagios3"
-set[:nagios][:cache_dir] = "/var/log/nagios" if platform?("redhat", "centos", "fedora")
+set[:nagios][:cache_dir] = "/var/log/nagios" if redhat_platform?
 set[:nagios][:state_dir] = "/var/lib/nagios3" 
-set[:nagios][:state_dir] = "/var/log/nagios" if platform?("redhat", "centos", "fedora")
+set[:nagios][:state_dir] = "/var/log/nagios" if redhat_platform?
 set[:nagios][:docroot]   = "/usr/share/nagios3/htdocs"
-set[:nagios][:docroot]   = "/usr/share/nagios/html" if platform?("redhat", "centos", "fedora")
+set[:nagios][:docroot]   = "/usr/share/nagios/html" if redhat_platform?
 set[:nagios][:config_subdir] = "conf.d"
 set[:nagios][:cgi_dir] = "/usr/lib/cgi-bin/nagios3"
-set[:nagios][:cgi_dir] = "/usr/lib64/nagios/cgi-bin" if platform?("redhat", "centos", "fedora")
+set[:nagios][:cgi_dir] = "/usr/lib64/nagios/cgi-bin" if redhat_platform?
 set[:nagios][:resource_file] = "/etc/nagios3/resource.cfg"
-set[:nagios][:resource_file] = "/etc/nagios/private/resource.cfg" if platform?("redhat", "centos", "fedora")
+set[:nagios][:resource_file] = "/etc/nagios/private/resource.cfg" if redhat_platform?
 set[:nagios][:nagios_pid] = "/var/run/nagios3/nagios3.pid"
-set[:nagios][:nagios_pid] = "/var/run/nagios.pid" if platform?("redhat", "centos", "fedora")
+set[:nagios][:nagios_pid] = "/var/run/nagios.pid" if redhat_platform?
 set[:nagios][:p1_cmd] = "/usr/lib/nagios3/p1.pl"
-set[:nagios][:p1_cmd] = "/usr/sbin/p1.pl" if platform?("redhat", "centos", "fedora")
+set[:nagios][:p1_cmd] = "/usr/sbin/p1.pl" if redhat_platform?
 set[:nagios][:exec] = "/usr/sbin/nagios3"
-set[:nagios][:exec] = "/usr/sbin/nagios" if platform?("redhat", "centos", "fedora")
+set[:nagios][:exec] = "/usr/sbin/nagios" if redhat_platform?
 
 
 default[:nagios][:notifications_enabled]   = 0
