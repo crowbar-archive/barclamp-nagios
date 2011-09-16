@@ -46,6 +46,8 @@ set[:nagios][:p1_cmd] = "/usr/lib/nagios3/p1.pl"
 set[:nagios][:p1_cmd] = "/usr/sbin/p1.pl" if redhat_platform?
 set[:nagios][:exec] = "/usr/sbin/nagios3"
 set[:nagios][:exec] = "/usr/sbin/nagios" if redhat_platform?
+set[:nagios][:stylesheets] = "/etc/nagios3"
+set[:nagios][:stylesheets] = "/usr/share/nagios/html" if redhat_platform?
 
 
 default[:nagios][:notifications_enabled]   = 0
