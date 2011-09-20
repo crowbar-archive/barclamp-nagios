@@ -32,3 +32,29 @@ locale_additions:
           attributes: Attributes
         edit_deployment: 
           deployment: Deployment
+
+debs:
+  pkgs:
+    - nagios-nrpe-server
+    - nagios-plugins
+    - nagios-plugins-basic
+    - nagios-plugins-standard
+    - libjson-perl
+    - libmath-calc-units-perl
+    - libnagios-plugin-perl
+    - libnagios-object-perl
+    - libparams-validate-perl
+    - nagios3
+    - nagios-nrpe-plugin
+    - nagios-images
+
+rpms:
+  repos:
+    - bare epel5-nagios3 10 http://repos.fedorapeople.org/repos/peter/nagios3/epel-5/x86_64/
+  pkgs:
+    - nagios
+    - nrpe
+    - nagios-plugins-all
+    - nagios-plugins
+    - nagios-plugins-perl
+    - nagios-plugins-nrpe
