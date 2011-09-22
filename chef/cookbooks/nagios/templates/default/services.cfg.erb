@@ -156,12 +156,6 @@ define service {
 <% unless @service_hosts['nova-single-machine'].nil? -%>
 # These are the services to watch on a nova-single-machine
 define service {
-    service_description Single Nova Object Store
-    hostgroup_name      nova-single-machine
-    check_command       check_nova_objectstore
-    use                 default-service
-}
-define service {
     service_description Single Nova API
     hostgroup_name      nova-single-machine
     check_command       check_nova_api
@@ -220,12 +214,6 @@ define service {
 
 <% unless @service_hosts['nova-multi-controller'].nil? -%>
 # These are the services to watch on a nova-single-machine
-define service {
-    service_description Multi Nova Object Store
-    hostgroup_name      nova-multi-controller
-    check_command       check_nova_objectstore
-    use                 default-service
-}
 define service {
     service_description Multi Nova Scheduler
     hostgroup_name      nova-multi-controller

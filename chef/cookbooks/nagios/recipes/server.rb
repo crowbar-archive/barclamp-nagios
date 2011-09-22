@@ -217,7 +217,7 @@ end
 #
 # check_nova_ldap - one day if needed.
 #
-nova_commands = %w{ check_nova_api check_nova_compute check_nova_network check_nova_objectstore check_nova_rabbit check_nova_scheduler check_nova_volume check_nova_manage }
+nova_commands = %w{ check_nova_api check_nova_compute check_nova_network check_nova_rabbit check_nova_scheduler check_nova_volume check_nova_manage }
 
 swift_svcs = %w{swift-object swift-object-auditor swift-object-replicator swift-object-updater} 
 swift_svcs =swift_svcs + %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater}
