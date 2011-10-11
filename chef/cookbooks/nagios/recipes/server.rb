@@ -94,6 +94,7 @@ end
 Chef::Log.debug("Public domain [" + public_domain + "]")
 
 # Package install list
+do_chk_config = false
 case node[:platform]
 when "ubuntu","debian"
   pkg_list = %w{ nagios3 nagios-nrpe-plugin nagios-images }
@@ -101,6 +102,7 @@ when "ubuntu","debian"
 when "redhat","centos"
   pkg_list = %w{ nagios php gd }
   nagios_svc_name = "nagios"
+  do_chk_config = true
 end
 
 pkg_list.each do |pkg|
@@ -247,6 +249,14 @@ end
 
 nagios_conf "hosts" do
   variables :hosts => hosts, :platforms => platforms
+end
+
+if do_chk_config
+  # Everyone needs chef-client running - redhat doesn't chkconfig this by default.
+  bash "Check config nagios" do
+    code "/sbin/chkconfig --level 345 nagios on"
+    not_if "/sbin/chkconfig --list nagios | grep -q on"
+  end
 end
 
 # End of recipe transactions
