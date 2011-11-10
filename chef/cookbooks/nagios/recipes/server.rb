@@ -66,12 +66,7 @@ platforms = []
 nodes.each do |n| 
   ip = Nagios::Evaluator.get_value_by_type(n, :admin_ip_eval)
   hosts[ip] = n unless ip.nil?
-  case n[:platform]
-  when "ubuntu","debian"
-    platforms << "ubuntu" unless platforms.member?("ubuntu")
-  when "redhat","centos"
-    platforms << "redhat" unless platforms.member?("redhat")
-  end
+   platforms << n[:platform]
 end
 
 # Build a hash of service name to the server fulfilling that role (NOT a list ) 
