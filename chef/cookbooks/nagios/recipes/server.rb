@@ -66,9 +66,8 @@ platforms = []
 nodes.each do |n| 
   ip = Nagios::Evaluator.get_value_by_type(n, :admin_ip_eval)
   hosts[ip] = n unless ip.nil?
-   platforms << n[:platform]
-end
-
+  platforms << n[:platform] unless platforms.include?(n[:platform])
+end 
 # Build a hash of service name to the server fulfilling that role (NOT a list ) 
 role_list = Array.new
 service_hosts = Hash.new
