@@ -84,13 +84,6 @@ pkg_list.each do |pkg|
   package pkg
 end
 
-# Service startup definition
-service "nagios-nrpe-server" do
-  service_name nrpe_svc_name
-  action :enable
-  supports :restart => true, :reload => true
-end
-
 # Set directory ownership and permissions
 remote_directory plugin_dir do
   source "plugins"
@@ -116,7 +109,7 @@ template "/etc/nagios/nrpe.cfg" do
   group "nagios"
   mode "0644"
   variables(vars)
-  notifies :restart, resources(:service => "nagios-nrpe-server")
+  notifies :restart, "service[nagios-nrpe-server]"
 end
 
 directory "/etc/nagios/nrpe.d" do
@@ -131,5 +124,12 @@ file "#{plugin_dir}/check_dhcp" do
   mode "4755"
   owner "root"
   group "root"
+end
+
+# Service startup definition
+service "nagios-nrpe-server" do
+  service_name nrpe_svc_name
+  action :enable
+  supports :restart => true, :reload => true
 end
 
