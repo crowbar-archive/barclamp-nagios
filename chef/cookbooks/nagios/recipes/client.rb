@@ -84,6 +84,16 @@ pkg_list.each do |pkg|
   package pkg
 end
 
+if lib64 == ""
+  bash "Fix nrpe startup script" do
+    code <<-'EOH'
+killall nrpe
+sed -ie "s/\(.*start_daemon.*\)/\1\n\tpidof nrpe > \$PIDDIR\/nrpe.pid/g" /etc/init.d/nagios-nrpe-server
+EOH
+    not_if "grep -q pidof /etc/init.d/nagios-nrpe-server"
+  end
+end
+
 # Set directory ownership and permissions
 remote_directory plugin_dir do
   source "plugins"
