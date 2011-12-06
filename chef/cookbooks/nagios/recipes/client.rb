@@ -143,3 +143,13 @@ service "nagios-nrpe-server" do
   supports :restart => true, :reload => true
 end
 
+# Fix rabbit tests
+bash "replace parts of alertness tools" do
+  code <<-'EOH'
+sed -ie "s/Management: Web UI/RabbitMQ Management/g" /usr/lib/nagios/plugins/check_rabbitmq_aliveness
+exit 0
+EOH
+  action :run
+end
+
+
