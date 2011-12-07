@@ -361,3 +361,22 @@ define service {
 }
 <% end %>
 <% end ## end of glance present condition %>
+
+<% unless @service_hosts['keystone-server'].nil? then  %>
+<% %w{keystone}.each do |svc| %>
+define service {
+    service_description Keystone process <%= svc %>  
+    hostgroup_name      keystone-server
+    check_command       check_<%= svc %>
+    use                 default-service
+}
+<% end %>
+<% %w{keystone-service keystone-admin}.each do |svc| %>
+define service {
+    service_description Port check for <%= svc%> server
+    hostgroup_name      keystone-server
+    check_command       check_port_<%= svc%>
+    use                 default-service
+}
+<% end %>
+<% end ## end of keystone present condition %>
