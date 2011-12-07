@@ -221,11 +221,13 @@ swift_svcs =swift_svcs + %w{swift-account swift-account-reaper swift-account-aud
 swift_svcs =swift_svcs + ["swift-proxy"] 
 
 glance_svcs = %w{glance-api glance-registry}
+keystone_svcs = %w{keystone}
 
+ports=%w{keystone-admin keystone-service glance-api glance-registry swift-object swift-container swift-account swift-proxy}
 
 %w{ commands templates timeperiods}.each do |conf|
   nagios_conf conf do
-    variables :nova_commands => nova_commands, :svcs => swift_svcs + glance_svcs
+    variables :nova_commands => nova_commands, :svcs => swift_svcs + glance_svcs + keystone_svcs, :ports => ports
   end
 end
 
