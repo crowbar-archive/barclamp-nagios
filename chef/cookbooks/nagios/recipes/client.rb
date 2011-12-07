@@ -136,6 +136,13 @@ file "#{plugin_dir}/check_dhcp" do
   group "root"
 end
 
+# Set file ownership and permissions
+file "#{plugin_dir}/check_apt" do
+  mode "4755"
+  owner "root"
+  group "root"
+end
+
 # Service startup definition
 service "nagios-nrpe-server" do
   service_name nrpe_svc_name
