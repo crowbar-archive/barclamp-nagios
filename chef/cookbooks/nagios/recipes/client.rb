@@ -50,38 +50,18 @@ search(:node, "roles:nagios-server#{env_filter}") do |n|
   end
 end
 
+include_recipe "nagios::common"
+
 # Package/plugin install list
 case node[:platform]
 when "ubuntu","debian"
-  pkg_list=%w{
-    nagios-nrpe-server
-    nagios-plugins
-    nagios-plugins-basic
-    nagios-plugins-standard
-    libjson-perl
-    libmath-calc-units-perl
-    libnagios-plugin-perl
-    libnagios-object-perl
-    libparams-validate-perl
-  }
   nrpe_svc_name = "nagios-nrpe-server"
   plugin_dir = "/usr/lib/nagios/plugins"
   lib64 = ""
 when "redhat","centos"
-  pkg_list=%w{
-    nrpe
-    nagios-plugins
-    nagios-plugins-nrpe
-    nagios-plugins-perl
-    nagios-plugins-all
-  }
   nrpe_svc_name = "nrpe"
   plugin_dir = "/usr/lib64/nagios/plugins"
   lib64 = "64"
-end
-
-pkg_list.each do |pkg|
-  package pkg
 end
 
 if lib64 == ""
@@ -120,13 +100,6 @@ template "/etc/nagios/nrpe.cfg" do
   mode "0644"
   variables(vars)
   notifies :restart, "service[nagios-nrpe-server]"
-end
-
-directory "/etc/nagios/nrpe.d" do
-  owner "nagios"
-  group "nagios"
-  mode "0755"
-  action :create
 end
 
 # Set file ownership and permissions
