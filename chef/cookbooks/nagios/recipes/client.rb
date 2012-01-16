@@ -29,7 +29,12 @@ env_filter = " AND environment:#{node[:nagios][:config][:environment]}"
 nodes = search(:node, "roles:provisioner-server#{env_filter}")
 
 # Get a list of provisioner addresses
-prov_addresses = nodes.map { |n| Nagios::Evaluator.get_value_by_type(n, :admin_ip_eval) }
+prov_addresses = nodes.map do |n|
+
+  n = node if node.name == n.name
+
+  Nagios::Evaluator.get_value_by_type(n, :admin_ip_eval)
+end
 
 # The master admin node is the first one in the list
 provisioner_ip =  prov_addresses[0]
