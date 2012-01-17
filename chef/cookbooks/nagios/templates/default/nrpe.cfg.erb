@@ -39,8 +39,9 @@ command[check_gmetad]=/usr/lib<%= @lib64 %>/nagios/plugins/check_procs -w 1:2 -c
 command[check_local_time]=/usr/lib<%= @lib64 %>/nagios/plugins/check_ntp_time -H 127.0.0.1
 
 command[check_ntp]=/usr/lib<%= @lib64 %>/nagios/plugins/check_ntp -H <%= @ntp_servers %>
-
+<% if @provisioner_ip -%>
 command[check_dhcp]=/usr/lib<%= @lib64 %>/nagios/plugins/check_dhcp -s <%= @provisioner_ip %> -u -i <%= @admin_interface %>
+<% end -%>
 command[check_dns]=/usr/lib<%= @lib64 %>/nagios/plugins/check_dns -H <%= @domain_name %>
 
 command[check_apt]=/usr/lib<%= @lib64 %>/nagios/plugins/check_apt

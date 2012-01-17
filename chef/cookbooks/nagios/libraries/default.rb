@@ -42,7 +42,7 @@ class Evaluator
   end
   
   def eval_with_context(str)
-    eval(str,@b)
+    eval(str,@b) if str and @b
   end
   
   def log_eval_vars()

@@ -28,12 +28,17 @@ env_filter = " AND environment:#{node[:nagios][:config][:environment]}"
 # Find the provisioner ip # Assume provisioner is monitored by my nagios server
 nodes = search(:node, "roles:provisioner-server#{env_filter}")
 
-# Get a list of provisioner addresses
-prov_addresses = nodes.map { |n| Nagios::Evaluator.get_value_by_type(n, :admin_ip_eval) }
-
-# The master admin node is the first one in the list
-provisioner_ip =  prov_addresses[0]
-admin_interface = Nagios::Evaluator.get_value_by_type(node, :admin_interface_eval)
+# Get a list of provisioner addresses, if the provisioner is up by now.
+if nodes and not nodes.empty?
+  prov_addresses = nodes.map { |n| 
+    Nagios::Evaluator.get_value_by_type(n, :admin_ip_eval) 
+  }
+  # The master admin node is the first one in the list
+  provisioner_ip =  prov_addresses[0]
+  admin_interface = Nagios::Evaluator.get_value_by_type(node, :admin_interface_eval)
+else
+  provisioner_ip = admin_interface = nil
+end
 
 # Get the DNS domain name
 domain_name = node[:dns][:domain]
