@@ -30,9 +30,10 @@ nodes = search(:node, "roles:provisioner-server#{env_filter}")
 
 # Get a list of provisioner addresses, if the provisioner is up by now.
 if nodes and not nodes.empty?
-  prov_addresses = nodes.map { |n| 
+  prov_addresses = nodes.map do |n| 
+    n = node if node.name == n.name
     Nagios::Evaluator.get_value_by_type(n, :admin_ip_eval) 
-  }
+  end
   # The master admin node is the first one in the list
   provisioner_ip =  prov_addresses[0]
   admin_interface = Nagios::Evaluator.get_value_by_type(node, :admin_interface_eval)
