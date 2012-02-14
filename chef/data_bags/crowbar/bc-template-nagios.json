@@ -10,6 +10,10 @@
   "deployment": {
     "nagios": {
       "crowbar-revision": 0,
+      "element_states": {
+        "nagios-server": [ "readying", "ready", "applying" ],
+        "nagios-client": [ "readying", "ready", "applying" ]
+      },
       "elements": {},
       "element_order": [
         [ "nagios-server", "nagios-client" ]
