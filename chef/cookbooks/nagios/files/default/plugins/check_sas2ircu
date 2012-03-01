@@ -1,0 +1,192 @@
+#!/usr/bin/perl -w
+# Nagios plugin that checks LSI SAS2 controllers RAID status via sas2ircu
+# program
+
+# Copyright (C) 2011 Emmanuel Lacour <elacour@home-dn.net>
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2, or (at your option) any
+# later version.
+#
+# This file is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this file; see the file COPYING.  If not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+
+
+
+use strict;
+use lib qw(/usr/local/lib/nagios/plugins /usr/lib/nagios/plugins);
+use utils qw(%ERRORS);
+
+my $sas2ircu = '/usr/sbin/sas2ircu';
+my $status = $ERRORS{'OK'};
+my %controllers;
+my $errors_message;
+
+unless ( -x $sas2ircu ) {
+    print "$sas2ircu not found or not executable\n";
+    exit ($ERRORS{'UNKNOWN'});
+}
+
+unless ( $> == 0 ) {
+    print "This program must be run as root. You may use wrappers like sudo to do this.\n";
+    exit ($ERRORS{'UNKNOWN'});
+}
+
+foreach my $line (split /\n/, `$sas2ircu LIST`) {
+    if ( $line =~ /^\s+(\d+)\s+(.+)\s+(.+)\s+(.+)\s+(.+)\s+(.+)\s+(.+)\s*$/ ) {
+        my $ctrl_id = $1;
+        my $ctrl_type = $2;
+        $controllers{$ctrl_id}{type} = $ctrl_type;
+    }
+}
+
+unless ( scalar keys %controllers ) {
+    print "No controller found\n";
+    exit ($ERRORS{'UNKNOWN'});
+}
+
+foreach my $ctrl_id (keys %controllers) {
+    my $infos = `$sas2ircu $ctrl_id DISPLAY`;
+
+    my %ctrl_infos;
+    my $ctrl_start;
+    foreach my $line (split /\n/, $infos) {
+	chomp($line);
+        if ( $line =~ /^Controller information/ ) {
+            $ctrl_start = 1;
+            next;
+        }
+	next unless ( $ctrl_start );
+        if ( $line =~ /^-/ && $ctrl_start == 1 ) {
+            $ctrl_start = 2;
+            next;
+        }
+        if ( $line =~ /^-/ && $ctrl_start == 2 ) {
+            $ctrl_start = 0;
+            next;
+        }
+        next unless ( $ctrl_start == 2 );
+        if ( $line =~ /^\s*(.*)\s+:\s+(.*)$/ ) {
+            my $key = $1;
+            my $value = $2;
+            $key =~ s/\s+$//;
+            $key =~ s/^\s+//;
+            $value =~ s/\s+$//;
+            $value =~ s/^\s+//;
+            $ctrl_infos{$key} = $value;
+        }
+    }
+
+    # Volumes
+    my %volumes_infos;
+    my $volume_id = undef;
+    foreach my $line (split /\n/, $infos) {
+	chomp($line);
+        if ( $line =~ /^IR volume (\d+)\s*$/ ) {
+            $volume_id = $1;
+            next;
+        }
+        if ( defined($volume_id) && $line =~ /^\s*$/ ) {
+            $volume_id = undef;
+            next;
+        }
+        next unless ( defined($volume_id) );
+        if ( $line =~ /^\s*(.*)\s+:\s+(.*)\s*$/ ) {
+            my $key = $1;
+            my $value = $2;
+            $key =~ s/\s+$//;
+            $key =~ s/^\s+//;
+            $value =~ s/\s+$//;
+            $value =~ s/^\s+//;
+            if ( $key =~ /^PHY/ ) {
+                push @{$volumes_infos{$volume_id}{'disks'}}, $value;
+            } else {
+                $volumes_infos{$volume_id}{$key} = $value;
+            }
+        }
+    }
+
+    unless ( scalar keys %volumes_infos ) {
+        print "\tNo volume found\n";
+        next;
+    }
+
+    # Disks
+    my %disks_infos;
+    my $disk_start = 0;
+    my $disk_encl = undef;
+    my $disk_slot = undef;
+    foreach my $line (split /\n/, $infos) {
+	chomp($line);
+        if ( $line =~ /^Device is a Hard disk/ ) {
+            $disk_start = 1;
+            next;
+        }
+        if ( $disk_start && $line =~ /^\s*$/ ) {
+            $disk_start = 0;
+            $disk_encl = undef;
+            $disk_slot = undef;
+            next;
+        }
+        next unless ( $disk_start );
+        if ( $line =~ /^\s*(.*)\s+:\s+(.*)\s*$/ ) {
+            my $key = $1;
+            my $value = $2;
+            $key =~ s/\s+$//;
+            $key =~ s/^\s+//;
+            $value =~ s/\s+$//;
+            $value =~ s/^\s+//;
+            if ( $key eq 'Enclosure #' ) {
+                $disk_encl = $value;
+                next;
+            }
+            if ( $key eq 'Slot #' ) {
+                $disk_slot = $value;
+                next;
+            }
+            if ( defined($disk_encl) && defined($disk_slot) ) {
+                $disks_infos{$disk_encl.':'.$disk_slot}{$key} = $value;
+            }
+        }
+    }
+
+    foreach my $volume_id (keys %volumes_infos) {
+        unless ( $volumes_infos{$volume_id}{'Status of volume'} eq 'Okay (OKY)' ) {
+            $errors_message .= "Ctrl $ctrl_id: vol $volume_id ".$volumes_infos{$volume_id}{'Status of volume'};
+            $status = $ERRORS{'CRITICAL'} unless ( $volumes_infos{$volume_id}{'Status of volume'} eq 'Okay (OKY)' );
+        }
+
+        unless ( scalar @{$volumes_infos{$volume_id}{disks}} ) {
+            # FIXME is this critical, can this happens ?
+            next;
+        }
+
+        foreach my $disk (@{$volumes_infos{$volume_id}{disks}}) {
+            unless ( $disks_infos{$disk} ) {
+                $errors_message .= ", disk $disk not found!";
+                $status = $ERRORS{'CRITICAL'};
+                next;
+            }
+            unless ( $disks_infos{$disk}{'State'} eq 'Optimal (OPT)' ) {
+                $errors_message .= ", disk: ".$disk." : ".$disks_infos{$disk}{'State'};
+                $status = $ERRORS{'CRITICAL'} unless ( $disks_infos{$disk}{'State'} eq 'Optimal (OPT)' );
+            }
+        }
+    }
+}
+
+if ( $status == $ERRORS{'OK'} ) {
+    print "All arrays OK\n";
+} elsif ( $errors_message ) {
+    print "$errors_message\n";
+}
+
+exit ($status);
