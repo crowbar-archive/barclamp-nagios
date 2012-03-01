@@ -13,7 +13,9 @@
           "required": true,
           "mapping": {
             "admin_ip_eval": { "type": "str", "required": true },
-            "admin_interface_eval": { "type": "str", "required": true }
+            "admin_interface_eval": { "type": "str", "required": true },
+            "monitor_hw": { "type": "bool", "required": false }
+
           }
         }
       }

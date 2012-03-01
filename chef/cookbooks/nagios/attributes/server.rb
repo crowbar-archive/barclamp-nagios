@@ -77,3 +77,4 @@ default[:nagios][:default_service][:notification_interval] = 1200
 default[:nagios][:config] = {}
 default[:nagios][:config][:environment] = "nagios-config-default"
 default[:nagios][:config][:mode] = "full"
+default[:nagios][:config][:monitor_hw] = true 
