@@ -11,7 +11,7 @@
 # Donated to the public domain by Nicolai Langfeldt (janl@linpro.no)
 #
 
-ipmitool sensor | gawk -F'|' '
+sudo ipmitool sensor | gawk -F'|' '
 BEGIN { 
 	EXIT=0;
 	MSG[0]="OK: ";

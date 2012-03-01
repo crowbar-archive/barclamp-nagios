@@ -22,7 +22,7 @@
 
 
 use strict;
-use lib qw(/usr/local/lib/nagios/plugins /usr/lib/nagios/plugins);
+use lib qw(/usr/lib/nagios/plugins /usr/lib64/nagios/plugins);
 use utils qw(%ERRORS);
 
 my $sas2ircu = '/usr/sbin/sas2ircu';
@@ -30,12 +30,16 @@ my $status = $ERRORS{'OK'};
 my %controllers;
 my $errors_message;
 
+## needed to make perl-suidperl happy.
+$ENV{PATH}="";
+
 unless ( -x $sas2ircu ) {
     print "$sas2ircu not found or not executable\n";
     exit ($ERRORS{'UNKNOWN'});
 }
 
-unless ( $> == 0 ) {
+# since we're running w/ setuid, don't perform this check
+unless ( 1==1 or $> == 0 ) {
     print "This program must be run as root. You may use wrappers like sudo to do this.\n";
     exit ($ERRORS{'UNKNOWN'});
 }
