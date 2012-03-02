@@ -18,18 +18,38 @@
 # 
 
 if node["roles"].include?("nagios-client") 
-    include_recipe "nagios::common" 
-    nagios_plugins =node["nagios"]["plugin_dir"]
-    raid_type = node["crowbar_wall"]["raid"]["controller"] rescue nil 
+  include_recipe "nagios::common" 
+  nagios_plugins =node["nagios"]["plugin_dir"]
+  raid_type = node["crowbar_wall"]["raid"]["controller"] rescue nil 
+  
+  # ensure IPMI drivers loaded
+  ipmi_load "ipmi_load" do
+    settle_time 30
+    action :run
+  end
 
-    template "/etc/nagios/nrpe.d/monitor_hw_nrpe.cfg" do
-      source "monitor_hw_nrpe.cfg.erb"
-      mode "0644"
-      group node[:nagios][:group]
-      owner node[:nagios][:user]
+  # ensure raid utilities are installed, if we have raid
+  include_recipe "raid::install_tools" unless raid_type.nil?
+
+  nrpe_conf "monitor_hw_nrpe" do
       variables( { 
           :plugin_dir => nagios_plugins,
           :raid => raid_type })
-      notifies :restart, "service[nagios-nrpe-server]"
-    end 
+  end 
+
+  execute "setuid on sas2ircu" do
+    command "chmod g+rsx #{nagios_plugins}/check_sas2ircu"
+  end 
+  
+  execute "setuid on megacli" do
+    command "chmod g+rsx #{nagios_plugins}/check_megaraid_sas"
+  end 
+
+  execute "setuid on megacli" do
+    command "chmod g+rsx #{nagios_plugins}/check_ipmi.pl"
+  end 
+
+  # required to have perl scripts that are setuid
+  package "perl-suidperl"
+
 end

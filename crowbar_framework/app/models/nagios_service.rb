@@ -23,7 +23,14 @@ class NagiosService < ServiceObject
   def create_proposal
     @logger.debug("Nagios create_proposal: entering")
     base = super
-    @logger.debug("Nagios create_proposal: exiting")
+    raid_bc = ProposalObject.find_proposals("raid")
+    ipmi_bc = ProposalObject.find_proposals("ipmi")
+    
+    enab_raid = (!raid_bc.nil? and raid_bc.length > 0)
+    enab_ipmi = (!ipmi_bc.nil? and ipmi_bc.length > 0)
+    base["attributes"]["nagios"]["monitor_raid"] = enab_raid
+    base["attributes"]["nagios"]["monitor_ipmi"] = enab_ipmi
+    @logger.debug("Nagios create_proposal: exiting. IPMI: #{enab_raid}, RAID: #{enab_ipmi}")
     base
   end
 
