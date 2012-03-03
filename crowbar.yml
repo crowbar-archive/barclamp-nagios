@@ -38,6 +38,15 @@ locale_additions:
           deployment: Deployment
 
 debs:
+  ubuntu-10.10:
+    pkgs:
+      - perl-suid
+  ubuntu-11.04:
+    pkgs:
+      - perl-suid
+  ubuntu-11.10:
+    pkgs:
+      - perl-suid
   pkgs:
     - nagios-nrpe-server
     - nagios-plugins
@@ -51,7 +60,6 @@ debs:
     - nagios3
     - nagios-nrpe-plugin
     - nagios-images
-    - perl-suid
 
 rpms:
   redhat-5.6:
