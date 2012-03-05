@@ -255,7 +255,7 @@ if do_chk_config
   end
 end
 
-mon_hw = node[:nagios][:monitor_hw] rescue false
+mon_hw = node[:nagios][:monitor_raid] or node[:nagios][:monitor_ipmi] rescue false
 include_recipe "nagios::monitor_hw" if mon_hw == true
 
 # End of recipe transactions
