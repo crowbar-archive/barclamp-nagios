@@ -49,8 +49,8 @@ if ( $opt_h ) {
 	exit;
 }
 
-my $megaclibin = '/usr/sbin/MegaCli';  # the full path to your MegaCli binary
-my $megacli = "sudo $megaclibin";      # how we actually call MegaCli
+my $megaclibin = '/opt/MegaRAID/MegaCli/MegaCli64';  # the full path to your MegaCli binary
+my $megacli = "$megaclibin";      # how we actually call MegaCli
 my $megapostopt = '-NoLog';            # additional options to call at the end of MegaCli arguments
 
 my ($adapters);

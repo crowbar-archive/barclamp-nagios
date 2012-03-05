@@ -14,3 +14,4 @@ recipe "nagios::server", "Installs and configures a nagios server"
 end
 
 depends "apache2"
+depends "ipmi"
