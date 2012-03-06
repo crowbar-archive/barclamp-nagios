@@ -15,13 +15,13 @@
 #
 # Author: aabes
 # Note : This script runs on node and installs the local plugins and NRPE
-# 
+#
 
-if node["roles"].include?("nagios-client") 
-  include_recipe "nagios::common" 
+if node["roles"].include?("nagios-client")
+  include_recipe "nagios::common"
   nagios_plugins =node["nagios"]["plugin_dir"]
-  raid_type = node["crowbar_wall"]["raid"]["controller"] rescue nil 
-  
+  raid_type = node["crowbar_wall"]["raid"]["controller"] rescue nil
+
   # ensure IPMI drivers loaded
   ipmi_load "ipmi_load" do
     settle_time 30
@@ -32,24 +32,29 @@ if node["roles"].include?("nagios-client")
   include_recipe "raid::install_tools" unless raid_type.nil?
 
   nrpe_conf "monitor_hw_nrpe" do
-      variables( { 
+      variables( {
           :plugin_dir => nagios_plugins,
           :raid => raid_type })
-  end 
+  end
 
   execute "setuid on sas2ircu" do
     command "chmod g+rsx #{nagios_plugins}/check_sas2ircu"
-  end 
-  
+  end
+
   execute "setuid on megacli" do
     command "chmod g+rsx #{nagios_plugins}/check_megaraid_sas"
-  end 
+  end
 
   execute "setuid on megacli" do
     command "chmod g+rsx #{nagios_plugins}/check_ipmi.pl"
-  end 
+  end
 
   # required to have perl scripts that are setuid
-  package "perl-suidperl"
+  case node[:platform]
+  when "redhat","centos"
+    package "perl-suidperl"
+  when "ubuntu","debian"
+    package "perl-suid"
+  end
 
 end
