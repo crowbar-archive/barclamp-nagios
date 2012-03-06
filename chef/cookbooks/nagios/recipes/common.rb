@@ -51,6 +51,13 @@ pkg_list.each do |pkg|
   package pkg
 end
 
+directory "/etc/nagios" do
+  owner "nagios"
+  group "nagios"
+  mode "0755"
+  action :create
+end
+
 directory "/etc/nagios/nrpe.d" do
   owner "nagios"
   group "nagios"
