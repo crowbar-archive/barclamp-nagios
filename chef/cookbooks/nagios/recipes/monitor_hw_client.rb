@@ -54,7 +54,9 @@ if node["roles"].include?("nagios-client")
   when "redhat","centos"
     package "perl-suidperl"
   when "ubuntu","debian"
-    package "perl-suid"
+    unless [ "12.04" ].include? node[:platform_version]
+      package "perl-suid" 
+    end
   end
 
 end
