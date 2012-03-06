@@ -9,6 +9,8 @@ define hostgroup {
   members *
 }
 
+<% if @ipmi %>
+
 define service {
    hostgroup_name hw_monitor_hostgroup
    display_name  IPMI sensors
@@ -17,17 +19,6 @@ define service {
    use default-service
 }
 
-
-
-define service {
-   hostgroup_name hw_monitor_hostgroup
-   display_name  RAID status
-   service_description monitor RAID controllers for abnormal conditions
-   check_command check-raid
-   use default-service
-}
-
-<% if @ipmi %>
 define command {
   command_name    check-ipmi-sensors
   command_line    $USER1$/check_nrpe -H $HOSTADDRESS$ -c check_ipmi_sensors -t 40
@@ -38,6 +29,15 @@ define command {
 <% if @raid %>
 ### 
 # the appropriate check_* for the hw present in the machine is configured on each node
+define service {
+   hostgroup_name hw_monitor_hostgroup
+   display_name  RAID status
+   service_description monitor RAID controllers for abnormal conditions
+   check_command check-raid
+   use default-service
+}
+
+
 define command {
   command_name    check-raid
   command_line    $USER1$/check_nrpe -H $HOSTADDRESS$ -c check_raid -t 40

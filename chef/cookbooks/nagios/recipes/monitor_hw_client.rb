@@ -21,40 +21,45 @@ if node["roles"].include?("nagios-client")
   include_recipe "nagios::common"
   nagios_plugins =node["nagios"]["plugin_dir"]
   raid_type = node["crowbar_wall"]["raid"]["controller"] rescue nil
+  ipmi_avail = node["ipmi"]["bmc_enable"] rescue false
 
-  # ensure IPMI drivers loaded
-  ipmi_load "ipmi_load" do
-    settle_time 30
-    action :run
+  if raid_type or ipmi_avail
+    # required to have perl scripts that are setuid
+    case node[:platform]
+    when "redhat","centos"
+      package "perl-suidperl"
+    when "ubuntu","debian"
+      package "perl-suid"
+    end
   end
 
-  # ensure raid utilities are installed, if we have raid
-  include_recipe "raid::install_tools" unless raid_type.nil?
+
+  if raid_type
+    # ensure raid utilities are installed, if we have raid
+    include_recipe "raid::install_tools"
+    execute "setuid on sas2ircu" do
+      command "chmod g+rsx #{nagios_plugins}/check_sas2ircu"
+    end
+    execute "setuid on megacli" do
+      command "chmod g+rsx #{nagios_plugins}/check_megaraid_sas"
+    end
+  end
+
+  if ipmi_avail
+    # ensure IPMI drivers loaded
+    ipmi_load "ipmi_load" do
+      settle_time 30
+      action :run
+    end
+    execute "setuid on check_ipmi" do
+      command "chmod g+rsx #{nagios_plugins}/check_ipmi.pl"
+    end
+  end
 
   nrpe_conf "monitor_hw_nrpe" do
       variables( {
           :plugin_dir => nagios_plugins,
+          :ipmi => ipmi_avail,
           :raid => raid_type })
   end
-
-  execute "setuid on sas2ircu" do
-    command "chmod g+rsx #{nagios_plugins}/check_sas2ircu"
-  end
-
-  execute "setuid on megacli" do
-    command "chmod g+rsx #{nagios_plugins}/check_megaraid_sas"
-  end
-
-  execute "setuid on megacli" do
-    command "chmod g+rsx #{nagios_plugins}/check_ipmi.pl"
-  end
-
-  # required to have perl scripts that are setuid
-  case node[:platform]
-  when "redhat","centos"
-    package "perl-suidperl"
-  when "ubuntu","debian"
-    package "perl-suid"
-  end
-
 end
