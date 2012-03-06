@@ -1,10 +1,9 @@
-
 ###
 # This file is managed by Chef. Do not edit, it will be overwritten
 
-command[check_ipmi_sensors]=<%= @plugin_dir %>/check_ipmi_sensors
+command[check_ipmi_sensors]=<%= @plugin_dir %>/check_ipmi.pl
 
-###  will use <%= @raid %> monitoring
+###  will use <%= @raid.nil? ? 'none' : @raid  %> monitoring
   <%  if  /MegaCLi/i =~ @raid   %>
 command[check_raid]=<%= @plugin_dir %>/check_megaraid_sas
    <% end %>

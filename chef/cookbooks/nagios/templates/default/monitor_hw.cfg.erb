@@ -27,13 +27,15 @@ define service {
    use default-service
 }
 
-
+<% if @ipmi %>
 define command {
   command_name    check-ipmi-sensors
   command_line    $USER1$/check_nrpe -H $HOSTADDRESS$ -c check_ipmi_sensors -t 40
 }
+<% end %>
 
 
+<% if @raid %>
 ### 
 # the appropriate check_* for the hw present in the machine is configured on each node
 define command {
@@ -41,3 +43,4 @@ define command {
   command_line    $USER1$/check_nrpe -H $HOSTADDRESS$ -c check_raid -t 40
 }
 
+<% end %>

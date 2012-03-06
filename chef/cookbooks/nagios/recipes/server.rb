@@ -255,8 +255,8 @@ if do_chk_config
   end
 end
 
-#mon_hw = node[:nagios][:config][:monitor_hw] rescue false
-#include_recipe "nagios::monitor_hw" ##if mon_hw == true
+mon_hw = node[:nagios][:monitor_raid] or node[:nagios][:monitor_ipmi] rescue false
+include_recipe "nagios::monitor_hw" if mon_hw == true
 
 # End of recipe transactions
 Chef::Log.debug("END nagios-server")
