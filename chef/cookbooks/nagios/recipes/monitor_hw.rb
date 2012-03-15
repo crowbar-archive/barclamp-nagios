@@ -19,7 +19,7 @@
 
 include_recipe "nagios::common" if node["roles"].include?("nagios-client")
 nagios_plugins =node["nagios"]["plugin_dir"]
-raid = node["nagios"]["monitor_raid"]r
+raid = node["nagios"]["monitor_raid"]
 case node[:platform]
 when "centos", "redhat"
   ; 
