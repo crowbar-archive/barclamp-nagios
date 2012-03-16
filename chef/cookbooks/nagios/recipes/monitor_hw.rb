@@ -19,15 +19,15 @@
 
 include_recipe "nagios::common" if node["roles"].include?("nagios-client")
 nagios_plugins =node["nagios"]["plugin_dir"]
-raid = ""
+raid = node["nagios"]["monitor_raid"]
 case node[:platform]
 when "centos", "redhat"
-  raid = node["nagios"]["monitor_raid"]
+  ; 
 when "ubuntu"
   raid = nil  # our tools don't work on non-redhat
 end
 
 
 nagios_conf "monitor_hw" do
-  variables @raid => raid, @ipmi=> node["nagios"]["monitor_ipmi"]
+  variables :raid => raid, :ipmi=> node["nagios"]["monitor_ipmi"]
 end
