@@ -26,9 +26,13 @@ class NagiosService < ServiceObject
     sc = ServiceObject.barclamp_catalog
     enab_raid = !sc["barclamps"]["raid"].nil? rescue false
     enab_ipmi = !sc["barclamps"]["ipmi"].nil? rescue false
+
+    ## all good and fine, but we're not officially suporting HW monitoring for now..
+    enab_raid = enab_ipmi = false
     
     base["attributes"]["nagios"]["monitor_raid"] = enab_raid
     base["attributes"]["nagios"]["monitor_ipmi"] = enab_ipmi
+
     @logger.debug("Nagios create_proposal: exiting. IPMI: #{enab_raid}, RAID: #{enab_ipmi}")
     base
   end
