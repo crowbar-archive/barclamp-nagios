@@ -38,7 +38,8 @@ if node["roles"].include?("nagios-client")
 
   if raid_type
     # ensure raid utilities are installed, if we have raid
-    include_recipe "raid::install_tools"
+    ##include_recipe "raid::install_tools"
+    # - if raid is available, crowbar made sure to install the tools.
     execute "setuid on sas2ircu" do
       command "chmod g+rsx #{nagios_plugins}/check_sas2ircu"
     end
