@@ -96,9 +96,12 @@ end
 ntp_servers = node[:ntp][:ntp_servers] unless node[:ntp].nil? or node[:ntp][:ntp_servers].nil? or node[:ntp][:ntp_servers].empty?
 ntp_servers = "127.0.0.1" if node[:ntp].nil? or node[:ntp][:ntp_servers].nil? or node[:ntp][:ntp_servers].empty?
 
-#### setup variables for the different components 
+#### setup variables for the different components   
+
+own_admin_ip = Chef::Recipe::Barclamp::Inventory.get_network_by_type(node, "admin").address
+
 # common
-vars = { :lib64 => lib64, :mon_host => mon_host, :provisioner_ip => provisioner_ip, :domain_name => domain_name, :admin_interface => admin_interface, :plugin_dir => plugin_dir}
+vars = { :lib64 => lib64, :mon_host => mon_host, :provisioner_ip => provisioner_ip, :domain_name => domain_name, :admin_interface => admin_interface, :plugin_dir => plugin_dir, :own_admin_ip => own_admin_ip}
 # ntp
 vars.merge!({:ntp_servers => ntp_servers})
  
