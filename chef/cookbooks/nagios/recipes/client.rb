@@ -98,7 +98,7 @@ ntp_servers = "127.0.0.1" if node[:ntp].nil? or node[:ntp][:ntp_servers].nil? or
 
 #### setup variables for the different components   
 
-own_admin_ip = Chef::Recipe::Barclamp::Inventory.get_network_by_type(node, "admin").address
+own_admin_ip = node.address.addr
 
 # common
 vars = { :lib64 => lib64, :mon_host => mon_host, :provisioner_ip => provisioner_ip, :domain_name => domain_name, :admin_interface => admin_interface, :plugin_dir => plugin_dir, :own_admin_ip => own_admin_ip}
