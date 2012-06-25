@@ -3,8 +3,8 @@
   "description": "common monitoring service for the cluster that can be used by other barclamps",
   "attributes": {
     "nagios": {
-      "admin_ip_eval": "Chef::Recipe::Barclamp::Inventory.get_network_by_type(node, \"admin\").address",
-      "admin_interface_eval": "Chef::Recipe::Barclamp::Inventory.get_network_by_type(node, \"admin\").interface",
+      "admin_ip_eval": "node.address.addr",
+      "admin_interface_eval": "node.interface.name",
       "monitor_ipmi": true,
       "monitor_raid": true
     }
