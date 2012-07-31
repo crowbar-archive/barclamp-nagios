@@ -27,10 +27,14 @@ if node["roles"].include?("nagios-client")
     # required to have perl scripts that are setuid
     case node[:platform]
     when "redhat","centos"
-      package "perl-suidperl"
+      package "perl-suidperl" do
+        action :upgrade
+      end
     when "ubuntu","debian"
       unless [ "12.04" ].include? node[:platform_version]
-        package "perl-suid"
+        package "perl-suid" do
+          action :upgrade
+        end
       end
     end
   end

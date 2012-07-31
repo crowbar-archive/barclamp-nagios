@@ -100,7 +100,9 @@ when "redhat","centos"
 end
 
 pkg_list.each do |pkg|
-  package pkg
+  package pkg do
+    action :upgrade
+  end
 end
 
 cookbook_file "/usr/sbin/nagios" do
