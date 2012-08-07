@@ -23,15 +23,17 @@ class NagiosService < ServiceObject
   def create_proposal
     @logger.debug("Nagios create_proposal: entering")
     base = super
-    sc = ServiceObject.barclamp_catalog
-    enab_raid = !sc["barclamps"]["raid"].nil? rescue false
-    enab_ipmi = !sc["barclamps"]["ipmi"].nil? rescue false
+
+    enab_raid = Barclamp.find_by_name("raid") != nil
+    enab_bios = Barclamp.find_by_name("bios") != nil
 
     ## all good and fine, but we're not officially suporting HW monitoring for now..
     enab_raid = enab_ipmi = false
-    
-    base["attributes"]["nagios"]["monitor_raid"] = enab_raid
-    base["attributes"]["nagios"]["monitor_ipmi"] = enab_ipmi
+
+    hash = base.current_config.config_hash
+    hash["nagios"]["monitor_raid"] = enab_raid
+    hash["nagios"]["monitor_ipmi"] = enab_ipmi
+    base.current_config.config_hash = hash
 
     @logger.debug("Nagios create_proposal: exiting. IPMI: #{enab_raid}, RAID: #{enab_ipmi}")
     base
