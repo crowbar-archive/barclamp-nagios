@@ -1,4 +1,4 @@
-# Copyright 2011, Dell
+# Copyright 2012, Dell
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,6 @@
 #
 
 class NagiosService < ServiceObject
-
-  def initialize(thelogger)
-    @bc_name = "nagios"
-    @logger = thelogger
-  end
 
   def create_proposal
     @logger.debug("Nagios create_proposal: entering")
@@ -47,56 +42,49 @@ class NagiosService < ServiceObject
     #
     if state == "discovered"
       @logger.debug("Nagios transition: discovered state for #{name} for #{state}")
-      db = ProposalObject.find_proposal "nagios", inst
-      role = RoleObject.find_role_by_name "nagios-config-#{inst}"
 
-      if role.override_attributes["nagios"]["elements"]["nagios-server"].nil? or
-         role.override_attributes["nagios"]["elements"]["nagios-server"].empty?
+      prop = @barclamp.get_proposal(inst)
+
+      return [400, "Nagios Proposal is not active"] unless prop.active?
+
+      nodes = prop.active_config.get_nodes_by_role("nagios-server")
+      result = true
+      if nodes.empty?
         @logger.debug("Nagios transition: make sure that nagios-server role is on first: #{name} for #{state}")
-        result = add_role_to_instance_and_node("nagios", inst, name, db, role, "nagios-server")
+        result = add_role_to_instance_and_node(name, inst, "nagios-server")
+        nodes = [ Node.find_by_name(name) ]
       else
-        node = NodeObject.find_node_by_name name
-        unless node.role? "nagios-server"
+        node = Node.find_by_name(name)
+        unless nodes.include? node
           @logger.debug("Nagios transition: make sure that nagios-client role is on all nodes but first: #{name} for #{state}")
-          result = add_role_to_instance_and_node("nagios", inst, name, db, role, "nagios-client")
-        else
-          result = true
+          result = add_role_to_instance_and_node(name, inst, "nagios-client")
         end
       end
 
       # Set up the client url
       if result
-        role = RoleObject.find_role_by_name "nagios-config-#{inst}"
-
         # Get the server IP address
-        server_ip = nil
-        [ "nagios-server" ].each do |element|
-          tnodes = role.override_attributes["nagios"]["elements"][element]
-          next if tnodes.nil? or tnodes.empty?
-          tnodes.each do |n|
-            next if n.nil?
-            node = NodeObject.find_node_by_name(n)
-            server_ip = node.address("public").addr rescue node.address.addr
-          end
-        end
+        node = nodes.first
+        server_ip = node.address("public").addr rescue node.address.addr
 
         unless server_ip.nil?
-          node = NodeObject.find_node_by_name(name)
-          node.crowbar["crowbar"] = {} if node.crowbar["crowbar"].nil?
-          node.crowbar["crowbar"]["links"] = {} if node.crowbar["crowbar"]["links"].nil?
-          node.crowbar["crowbar"]["links"]["Nagios"] = "http://#{server_ip}/nagios3/cgi-bin/extinfo.cgi?type=1&host=#{node.shortname}"
-          node.save
+          node = Node.find_by_name(name)
+          chash = prop.active_config.get_node_config_hash(node)
+          chash["crowbar"] = {} if chash["crowbar"].nil?
+          chash["crowbar"]["links"] = {} if chash["crowbar"]["links"].nil?
+          chash["crowbar"]["links"]["Nagios"] = "http://#{server_ip}/nagios3/cgi-bin/extinfo.cgi?type=1&host=#{node.shortname}"
+          prop.active_config.set_node_config_hash(node, hash)
         end 
       end
 
       @logger.debug("Nagios transition: leaving from discovered state for #{name} for #{state}")
-      a = [200, NodeObject.find_node_by_name(name).to_hash ] if result
+      a = [200, "" ] if result
       a = [400, "Failed to add role to node"] unless result
       return a
     end
 
     @logger.debug("Nagios transition: leaving for #{name} for #{state}")
-    [200, NodeObject.find_node_by_name(name).to_hash ]
+    [200, ""]
   end
 
 end
