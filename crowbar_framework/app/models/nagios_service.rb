@@ -73,7 +73,7 @@ class NagiosService < ServiceObject
           chash["crowbar"] = {} if chash["crowbar"].nil?
           chash["crowbar"]["links"] = {} if chash["crowbar"]["links"].nil?
           chash["crowbar"]["links"]["Nagios"] = "http://#{server_ip}/nagios3/cgi-bin/extinfo.cgi?type=1&host=#{node.name}"
-          prop.active_config.set_node_config_hash(node, hash)
+          prop.active_config.set_node_config_hash(node, chash)
         end 
       end
 
