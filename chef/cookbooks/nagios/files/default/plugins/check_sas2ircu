@@ -59,7 +59,7 @@ foreach my $line (split /\n/, `$sas2ircu LIST`) {
 }
 
 unless ( scalar keys %controllers ) {
-    print "No controller found\n";
+    print "No controller found. ";
     exit ($ERRORS{'UNKNOWN'});
 }
 
@@ -125,7 +125,7 @@ foreach my $ctrl_id (keys %controllers) {
     }
 
     unless ( scalar keys %volumes_infos ) {
-        print "\tNo volume found\n";
+        print "No volume found. ";
         next;
     }
 

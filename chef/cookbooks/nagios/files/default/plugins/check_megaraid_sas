@@ -109,6 +109,7 @@ if ( $opt_o ) {
 	|| exitreport('UNKNOWN',"error: $megaclibin does not exist");	
 
 # Get the number of RAID controllers we have
+$ENV{'PATH'}=""; ## quiet down perl security fanatics...
 open (ADPCOUNT, "$megacli -adpCount $megapostopt |")  
 	|| exitreport('UNKNOWN',"error: Could not execute $megacli -adpCount $megapostopt");
 
