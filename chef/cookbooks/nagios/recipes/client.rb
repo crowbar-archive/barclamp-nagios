@@ -96,52 +96,69 @@ end
 ntp_servers = node[:ntp][:ntp_servers] unless node[:ntp].nil? or node[:ntp][:ntp_servers].nil? or node[:ntp][:ntp_servers].empty?
 ntp_servers = "127.0.0.1" if node[:ntp].nil? or node[:ntp][:ntp_servers].nil? or node[:ntp][:ntp_servers].empty?
 
-#### setup variables for the different components   
+if ["delete","reset"].member?(node[:state])
+  # Service startup definition
+  service "nagios-nrpe-server" do
+    service_name nrpe_svc_name
+    action [:stop,:disable]
+  end
+  
+  file "/etc/nagios/nrpe.cfg" do
+    action :delete
+  end
+else
 
-own_admin_ip = node.address.addr
+  own_admin_ip = node.address.addr
 
-# common
-vars = { :lib64 => lib64, :mon_host => mon_host, :provisioner_ip => provisioner_ip, :domain_name => domain_name, :admin_interface => admin_interface, :plugin_dir => plugin_dir, :own_admin_ip => own_admin_ip}
+  # common
+  vars = { :lib64 => lib64,
+    :mon_host => mon_host,
+    :provisioner_ip => provisioner_ip,
+    :domain_name => domain_name,
+    :admin_interface => admin_interface,
+    :plugin_dir => plugin_dir,
+    :own_admin_ip => own_admin_ip}
 # ntp
-vars.merge!({:ntp_servers => ntp_servers})
+  vars.merge!({:ntp_servers => ntp_servers})
  
-template "/etc/nagios/nrpe.cfg" do
-  source "nrpe.cfg.erb"
-  owner "nagios"
-  group "nagios"
-  mode "0644"
-  variables(vars)
-  notifies :restart, "service[nagios-nrpe-server]"
-end
+  template "/etc/nagios/nrpe.cfg" do
+    source "nrpe.cfg.erb"
+    owner "nagios"
+    group "nagios"
+    mode "0644"
+    variables(vars)
+    notifies :restart, "service[nagios-nrpe-server]"
+  end
 
-# Set file ownership and permissions
-file "#{plugin_dir}/check_dhcp" do
-  mode "4755"
-  owner "root"
-  group "root"
-end
+  # Set file ownership and permissions
+  file "#{plugin_dir}/check_dhcp" do
+    mode "4755"
+    owner "root"
+    group "root"
+  end
 
-# Set file ownership and permissions
-file "#{plugin_dir}/check_apt" do
-  mode "4755"
-  owner "root"
-  group "root"
-end
+  # Set file ownership and permissions
+  file "#{plugin_dir}/check_apt" do
+    mode "4755"
+    owner "root"
+    group "root"
+  end
 
-# Service startup definition
-service "nagios-nrpe-server" do
-  service_name nrpe_svc_name
-  action :enable
-  supports :restart => true, :reload => true
-end
+  # Service startup definition
+  service "nagios-nrpe-server" do
+    service_name nrpe_svc_name
+    action :enable
+    supports :restart => true, :reload => true
+  end
 
-# Fix rabbit tests
-bash "replace parts of alertness tools" do
-  code <<-'EOH'
+  # Fix rabbit tests
+  bash "replace parts of alertness tools" do
+    code <<-'EOH'
 sed -ie "s/Management: Web UI/RabbitMQ Management/g" /usr/lib/nagios/plugins/check_rabbitmq_aliveness
 exit 0
 EOH
-  action :run
+    action :run
+  end
 end
 
 
