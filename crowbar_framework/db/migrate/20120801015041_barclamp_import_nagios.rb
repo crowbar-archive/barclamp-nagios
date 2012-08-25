@@ -1,4 +1,4 @@
-# Copyright 2011, Dell
+# Copyright 2012, Dell
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+class BarclampImportNagios < ActiveRecord::Migration
+  def up
+    Barclamp.import_1x 'nagios'
+  end
 
-class NagiosController < BarclampController
+  def down
+    Barclamp.delete(Barclamp.find_by_name 'nagios')
+  end
+  
 end
-
