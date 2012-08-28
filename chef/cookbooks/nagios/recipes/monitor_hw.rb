@@ -23,7 +23,7 @@ raid = node["nagios"]["monitor_raid"]
 case node[:platform]
 when "centos", "redhat"
   ; 
-when "ubuntu"
+when "ubuntu", "suse"
   raid = nil  # our tools don't work on non-redhat
 end
 

@@ -68,6 +68,10 @@ when "redhat","centos"
   nrpe_svc_name = "nrpe"
   plugin_dir = "/usr/lib64/nagios/plugins"
   lib64 = "64"
+when "suse"
+  nrpe_svc_name = "nrpe"
+  plugin_dir = "/usr/lib/nagios/plugins"
+  lib64 = "64"
 end
 
 #save for other recipes that might contribute plugins.
