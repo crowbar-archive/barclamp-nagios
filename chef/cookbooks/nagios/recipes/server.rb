@@ -200,7 +200,7 @@ apache_site "000-default" do
 end
 
 if platform?("suse")
-  nagios_apache_conf = "#{node[:apache][:dir]}/vhost.d/nagios3.conf"
+  nagios_apache_conf = "#{node[:apache][:dir]}/vhosts.d/nagios3.conf"
 else
   nagios_apache_conf = "#{node[:apache][:dir]}/sites-available/nagios3.conf"
 end
