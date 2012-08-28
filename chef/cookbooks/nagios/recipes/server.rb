@@ -148,19 +148,19 @@ end
 
 directory "#{node[:nagios][:state_dir]}/rw" do
   owner "nagios"
-  group node[:apache][:user]
+  group node[:apache][:group]
   mode "2710"
 end
 
 directory "#{node[:nagios][:state_dir]}/spool" do
   owner "nagios"
-  group node[:apache][:user]
+  group node[:apache][:group]
   mode "2710"
 end
 
 directory "#{node[:nagios][:state_dir]}/spool/checkresults" do
   owner "nagios"
-  group node[:apache][:user]
+  group node[:apache][:group]
   mode "2710"
 end
 
@@ -187,7 +187,7 @@ else
   template "#{node[:nagios][:dir]}/htpasswd.users" do
     source "htpasswd.users.erb"
     owner "nagios"
-    group node[:apache][:user]
+    group node[:apache][:group]
     mode 0640
     variables(
       :sysadmins => sysadmins
