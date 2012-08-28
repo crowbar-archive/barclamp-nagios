@@ -45,6 +45,13 @@ when "redhat","centos"
     nagios-plugins-perl
     nagios-plugins-all
   }
+when "suse"
+  pkg_list=%w{
+    nagios-nrpe
+    nagios-plugins
+    nagios-plugins-nrpe
+    nagios-plugins-extras
+  }
 end
 
 pkg_list.each do |pkg|

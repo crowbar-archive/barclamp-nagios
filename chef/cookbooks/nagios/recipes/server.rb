@@ -97,6 +97,10 @@ when "redhat","centos"
   pkg_list = %w{ nagios php gd }
   nagios_svc_name = "nagios"
   do_chk_config = true
+when "suse"
+  pkg_list = %w{ nagios }
+  nagios_svc_name = "nagios"
+  do_chk_config = true
 end
 
 pkg_list.each do |pkg|
