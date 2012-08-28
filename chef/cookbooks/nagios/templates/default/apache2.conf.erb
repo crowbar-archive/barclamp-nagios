@@ -30,6 +30,8 @@
     AuthType Basic
     AuthUserFile "<%= node[:nagios][:dir] %>/htpasswd.users"
     require valid-user
+    Order allow,deny
+    Allow from all
   </Location>
 <% end -%>
 
