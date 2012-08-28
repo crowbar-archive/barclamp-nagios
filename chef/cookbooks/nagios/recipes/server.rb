@@ -197,11 +197,19 @@ apache_site "000-default" do
   enable false
 end
 
-template "#{node[:apache][:dir]}/sites-available/nagios3.conf" do
+if platform?("suse")
+  nagios_apache_conf = "#{node[:apache][:dir]}/vhosts.d/nagios3.conf"
+  nagios_apache_conf_reload = nagios_apache_conf
+else
+  nagios_apache_conf = "#{node[:apache][:dir]}/sites-available/nagios3.conf"
+  nagios_apache_conf_reload = "#{node[:apache][:dir]}/sites-enabled/nagios3.conf"
+end
+
+template nagios_apache_conf do
   source "apache2.conf.erb"
   mode 0644
   variables :public_domain => public_domain
-  if ::File.symlink?("#{node[:apache][:dir]}/sites-enabled/nagios3.conf")
+  if ::File.exists?(nagios_apache_conf_reload)
     notifies :reload, resources(:service => "apache2")
   end
 end
