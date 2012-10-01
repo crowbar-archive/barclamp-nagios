@@ -60,6 +60,7 @@ debs:
     - nagios3
     - nagios-nrpe-plugin
     - nagios-images
+    - liblwp-useragent-determined-perl
 
 rpms:
   redhat-5.6:

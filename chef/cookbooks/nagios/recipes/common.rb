@@ -32,6 +32,7 @@ when "ubuntu","debian"
     nagios-plugins-basic
     nagios-plugins-standard
     libjson-perl
+    liblwp-useragent-determined-perl
     libmath-calc-units-perl
     libnagios-plugin-perl
     libnagios-object-perl
