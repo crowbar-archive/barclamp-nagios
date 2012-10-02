@@ -179,12 +179,12 @@ define service {
     check_command       check_nova_compute
     use                 default-service
 }
-#define service {
-#    service_description Single Nova Volume
-#    hostgroup_name      nova-single-machine
-#    check_command       check_nova_volume
-#    use                 default-service
-#}
+define service {
+    service_description Single Nova Volume
+    hostgroup_name      nova-single-machine
+    check_command       check_nova_volume
+    use                 default-service
+}
 define service {
     service_description Single Nova System
     hostgroup_name      nova-single-machine
@@ -261,12 +261,16 @@ define service {
     check_command       check_nova_compute
     use                 default-service
 }
-#define service {
-#    service_description Multi Nova Volume
-#    hostgroup_name      nova-multi-compute
-#    check_command       check_nova_volume
-#    use                 default-service
-#}
+<% end -%>
+
+<% unless @service_hosts['nova-multi-volume'].nil? -%>
+# These are the services to watch on a nova-multi-volume
+define service {
+    service_description Multi Nova Volume
+    hostgroup_name      nova-multi-compute
+    check_command       check_nova_volume
+    use                 default-service
+}
 <% end -%>
 
 #### Services to watch for swift-compoents
