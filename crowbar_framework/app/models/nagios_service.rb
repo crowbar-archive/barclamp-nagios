@@ -15,9 +15,9 @@
 
 class NagiosService < ServiceObject
 
-  def create_proposal
+  def create_proposal(name)
     @logger.debug("Nagios create_proposal: entering")
-    base = super
+    base = super(name)
 
     enab_raid = Barclamp.find_by_name("raid") != nil
     enab_bios = Barclamp.find_by_name("bios") != nil
