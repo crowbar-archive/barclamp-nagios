@@ -1,8 +1,5 @@
 *.lock
-*.lck
-*.iso
-build-info
-sha1sums
-testing/
+.idea
+.rvmrc
 *~
 .#*
