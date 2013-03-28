@@ -9,6 +9,10 @@
       "monitor_raid": true
     }
   },
+  "roles": {
+      "nagios-server": { "jig": "chef" },
+      "nagios-client": { "jig": "chef" }
+  },
   "deployment": {
     "nagios": {
       "crowbar-revision": 0,
