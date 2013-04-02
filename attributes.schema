@@ -1,0 +1,16 @@
+{
+    "type": "map",
+    "required": true,
+    "mapping": {
+        "nagios": {
+            "type": "map",
+            "required": true,
+            "mapping": {
+                "admin_ip_eval": { "type": "str", "required": true },
+                "admin_interface_eval": { "type": "str", "required": true },
+                "monitor_ipmi": { "type": "bool", "required": false },
+            "monitor_raid": { "type": "bool", "required": false }
+            }
+        }
+    }
+}
