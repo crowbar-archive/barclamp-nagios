@@ -97,6 +97,10 @@ when "redhat","centos"
   pkg_list = %w{ nagios php gd }
   nagios_svc_name = "nagios"
   do_chk_config = true
+when "suse"
+  pkg_list = %w{ nagios }
+  nagios_svc_name = "nagios"
+  do_chk_config = true
 end
 
 pkg_list.each do |pkg|
@@ -142,19 +146,19 @@ end
 
 directory "#{node[:nagios][:state_dir]}/rw" do
   owner "nagios"
-  group node[:apache][:user]
+  group node[:apache][:group]
   mode "2710"
 end
 
 directory "#{node[:nagios][:state_dir]}/spool" do
   owner "nagios"
-  group node[:apache][:user]
+  group node[:apache][:group]
   mode "2710"
 end
 
 directory "#{node[:nagios][:state_dir]}/spool/checkresults" do
   owner "nagios"
-  group node[:apache][:user]
+  group node[:apache][:group]
   mode "2710"
 end
 
@@ -181,7 +185,7 @@ else
   template "#{node[:nagios][:dir]}/htpasswd.users" do
     source "htpasswd.users.erb"
     owner "nagios"
-    group node[:apache][:user]
+    group node[:apache][:group]
     mode 0640
     variables(
       :sysadmins => sysadmins
@@ -193,11 +197,19 @@ apache_site "000-default" do
   enable false
 end
 
-template "#{node[:apache][:dir]}/sites-available/nagios3.conf" do
+if platform?("suse")
+  nagios_apache_conf = "#{node[:apache][:dir]}/vhosts.d/nagios3.conf"
+  nagios_apache_conf_reload = nagios_apache_conf
+else
+  nagios_apache_conf = "#{node[:apache][:dir]}/sites-available/nagios3.conf"
+  nagios_apache_conf_reload = "#{node[:apache][:dir]}/sites-enabled/nagios3.conf"
+end
+
+template nagios_apache_conf do
   source "apache2.conf.erb"
   mode 0644
   variables :public_domain => public_domain
-  if ::File.symlink?("#{node[:apache][:dir]}/sites-enabled/nagios3.conf")
+  if ::File.exists?(nagios_apache_conf_reload)
     notifies :reload, resources(:service => "apache2")
   end
 end
