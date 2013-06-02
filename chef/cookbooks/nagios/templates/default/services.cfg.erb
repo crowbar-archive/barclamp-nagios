@@ -269,7 +269,7 @@ define service {
 # check the proxy
 define service {
     service_description swift proxy process
-    hostgroup_name      swift-proxy-acct
+    hostgroup_name      swift-proxy
     check_command       check_swift-proxy
     use                 default-service
 }
@@ -321,7 +321,7 @@ define service {
 
 define service {
     service_description swift http port for proxy server
-	hostgroup_name      swift-proxy-acct
+	hostgroup_name      swift-proxy
 	check_command       check_port_swift-proxy
     use                 default-service
 }
