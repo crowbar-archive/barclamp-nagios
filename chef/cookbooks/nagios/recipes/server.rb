@@ -230,7 +230,7 @@ nova_commands = %w{ check_nova_manage }
 swift_svcs = %w{swift-object swift-object-auditor swift-object-replicator swift-object-updater} 
 swift_svcs =swift_svcs + %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater}
 swift_svcs =swift_svcs + %w{swift-account swift-account-reaper swift-account-auditor swift-account-replicator}
-swift_svcs =swift_svcs + ["swift-proxy"] 
+swift_svcs =swift_svcs + ["swift-proxy"]
 
 glance_svcs = %w{glance-api glance-registry}
 keystone_svcs = %w{keystone}
