@@ -155,54 +155,54 @@ define service {
 
 <% unless @service_hosts['nova-single-machine'].nil? -%>
 # These are the services to watch on a nova-single-machine
-define service {
-    service_description Single Nova API
-    hostgroup_name      nova-single-machine
-    check_command       check_nova_api
-    use                 default-service
-}
-define service {
-    service_description Single Nova Scheduler
-    hostgroup_name      nova-single-machine
-    check_command       check_nova_scheduler
-    use                 default-service
-}
-define service {
-    service_description Single Nova Network
-    hostgroup_name      nova-single-machine
-    check_command       check_nova_network
-    use                 default-service
-}
-define service {
-    service_description Single Nova Compute
-    hostgroup_name      nova-single-machine
-    check_command       check_nova_compute
-    use                 default-service
-}
-define service {
-    service_description Single Nova Volume
-    hostgroup_name      nova-single-machine
-    check_command       check_nova_volume
-    use                 default-service
-}
+#define service {
+#    service_description Single Nova API
+#    hostgroup_name      nova-single-machine
+#    check_command       check_nova_api
+#    use                 default-service
+#}
+#define service {
+#    service_description Single Nova Scheduler
+#    hostgroup_name      nova-single-machine
+#    check_command       check_nova_scheduler
+#    use                 default-service
+#}
+#define service {
+#    service_description Single Nova Network
+#    hostgroup_name      nova-single-machine
+#    check_command       check_nova_network
+#    use                 default-service
+#}
+#define service {
+#    service_description Single Nova Compute
+#    hostgroup_name      nova-single-machine
+#    check_command       check_nova_compute
+#    use                 default-service
+#}
+#define service {
+#    service_description Single Nova Volume
+#    hostgroup_name      nova-single-machine
+#    check_command       check_nova_volume
+#    use                 default-service
+#}
 define service {
     service_description Single Nova System
     hostgroup_name      nova-single-machine
     check_command       check_nova_manage
     use                 default-service
 }
-define service {
-    service_description Single Nova Mysql
-    hostgroup_name      nova-single-machine
-    check_command       check_nova_mysql
-    use                 default-service
-}
-define service {
-    service_description Single Nova RabbitMQ
-    hostgroup_name      nova-single-machine
-    check_command       check_nova_rabbit
-    use                 default-service
-}
+#define service {
+#    service_description Single Nova Mysql
+#    hostgroup_name      nova-single-machine
+#    check_command       check_nova_mysql
+#    use                 default-service
+#}
+#define service {
+#    service_description Single Nova RabbitMQ
+#    hostgroup_name      nova-single-machine
+#    check_command       check_nova_rabbit
+#    use                 default-service
+#}
 # Until needed
 #define service {
 #    service_description Single Nova LDAP
@@ -214,36 +214,36 @@ define service {
 
 <% unless @service_hosts['nova-multi-controller'].nil? -%>
 # These are the services to watch on a nova-single-machine
-define service {
-    service_description Multi Nova Scheduler
-    hostgroup_name      nova-multi-controller
-    check_command       check_nova_scheduler
-    use                 default-service
-}
-define service {
-    service_description Multi Nova Network
-    hostgroup_name      nova-multi-controller
-    check_command       check_nova_network
-    use                 default-service
-}
+#define service {
+#    service_description Multi Nova Scheduler
+#    hostgroup_name      nova-multi-controller
+#    check_command       check_nova_scheduler
+#    use                 default-service
+#}
+#define service {
+#    service_description Multi Nova Network
+#    hostgroup_name      nova-multi-controller
+#    check_command       check_nova_network
+#    use                 default-service
+#}
 define service {
     service_description Multi Nova System
     hostgroup_name      nova-multi-controller
     check_command       check_nova_manage
     use                 default-service
 }
-define service {
-    service_description Multi Nova Mysql
-    hostgroup_name      nova-multi-controller
-    check_command       check_nova_mysql
-    use                 default-service
-}
-define service {
-    service_description Multi Nova RabbitMQ
-    hostgroup_name      nova-multi-controller
-    check_command       check_nova_rabbit
-    use                 default-service
-}
+#define service {
+#    service_description Multi Nova Mysql
+#    hostgroup_name      nova-multi-controller
+#    check_command       check_nova_mysql
+#    use                 default-service
+#}
+#define service {
+#    service_description Multi Nova RabbitMQ
+#    hostgroup_name      nova-multi-controller
+#    check_command       check_nova_rabbit
+#    use                 default-service
+#}
 # Until needed
 #define service {
 #    service_description Multi Nova LDAP
@@ -253,15 +253,15 @@ define service {
 #}
 <% end -%>
 
-<% unless @service_hosts['nova-multi-compute'].nil? -%>
+#<% unless @service_hosts['nova-multi-compute'].nil? -%>
 # These are the services to watch on a nova-multi-compute
-define service {
-    service_description Multi Nova Compute
-    hostgroup_name      nova-multi-compute
-    check_command       check_nova_compute
-    use                 default-service
-}
-<% end -%>
+#define service {
+#    service_description Multi Nova Compute
+#    hostgroup_name      nova-multi-compute
+#    check_command       check_nova_compute
+#    use                 default-service
+#}
+#<% end -%>
 
 #### Services to watch for swift-compoents
 <% if !@service_hosts['swift-proxy'].nil? or !@service_hosts['swift-proxy-acct'].nil? then  %>
