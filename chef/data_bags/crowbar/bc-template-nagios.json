@@ -1,6 +1,6 @@
 {
   "id": "bc-template-nagios",
-  "description": "common monitoring service for the cluster that can be used by other barclamps",
+  "description": "Common monitoring service for the cluster that can be used by other barclamps",
   "attributes": {
     "nagios": {
       "admin_ip_eval": "Chef::Recipe::Barclamp::Inventory.get_network_by_type(node, \"admin\").address",
