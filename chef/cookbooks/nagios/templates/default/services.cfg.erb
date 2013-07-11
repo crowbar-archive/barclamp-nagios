@@ -220,12 +220,14 @@ define service {
     check_command       check_nova_scheduler
     use                 default-service
 }
-define service {
-    service_description Multi Nova System
-    hostgroup_name      nova-multi-controller
-    check_command       check_nova_manage
-    use                 default-service
-}
+# Commenting out check_nova_manage as nova-manage command now relies
+# on keystone for authenication -- will revisit in Mesa 1.7
+#define service {
+#    service_description Multi Nova System
+#    hostgroup_name      nova-multi-controller
+#    check_command       check_nova_manage
+#    use                 default-service
+#}
 define service {
     service_description Multi Nova Mysql
     hostgroup_name      nova-multi-controller
