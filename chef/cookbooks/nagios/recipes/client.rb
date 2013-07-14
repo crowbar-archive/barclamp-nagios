@@ -75,7 +75,7 @@ when "suse"
 end
 
 #save for other recipes that might contribute plugins.
-node["nagios"]["plugin_dir"] = plugin_dir
+node.set["nagios"]["plugin_dir"] = plugin_dir
 
 if lib64 == ""
   bash "Fix nrpe startup script" do
