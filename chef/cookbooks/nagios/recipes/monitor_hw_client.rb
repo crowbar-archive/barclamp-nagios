@@ -17,7 +17,7 @@
 # Note : This script runs on node and installs the local plugins and NRPE
 #
 
-if node["roles"].include?("nagios-client")
+if node[:platform] != "windows" and node["roles"].include?("nagios-client")
   include_recipe "nagios::common"
   nagios_plugins =node["nagios"]["plugin_dir"]
   raid_type = node["crowbar_wall"]["raid"]["controller"] rescue nil
