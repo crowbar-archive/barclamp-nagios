@@ -213,17 +213,11 @@ define service {
 <% end -%>
 
 <% unless @service_hosts['nova-multi-controller'].nil? -%>
-# These are the services to watch on a nova-single-machine
+# These are the services to watch on a nova-multi-machine
 define service {
     service_description Multi Nova Scheduler
     hostgroup_name      nova-multi-controller
     check_command       check_nova_scheduler
-    use                 default-service
-}
-define service {
-    service_description Multi Nova Network
-    hostgroup_name      nova-multi-controller
-    check_command       check_nova_network
     use                 default-service
 }
 define service {
@@ -236,12 +230,6 @@ define service {
     service_description Multi Nova Mysql
     hostgroup_name      nova-multi-controller
     check_command       check_nova_mysql
-    use                 default-service
-}
-define service {
-    service_description Multi Nova RabbitMQ
-    hostgroup_name      nova-multi-controller
-    check_command       check_nova_rabbit
     use                 default-service
 }
 # Until needed
