@@ -56,7 +56,9 @@ search(:node, "roles:nagios-server#{env_filter}") do |n|
   end
 end
 
-include_recipe "nagios::common"
+unless node[:platform] == "windows"
+  include_recipe "nagios::common"
+end
 
 # Package/plugin install list
 case node[:platform]
@@ -74,26 +76,28 @@ when "suse"
   lib64 = "64"
 end
 
-#save for other recipes that might contribute plugins.
-node["nagios"]["plugin_dir"] = plugin_dir
+unless node[:platform] == "windows"
+  #save for other recipes that might contribute plugins.
+  node.set["nagios"]["plugin_dir"] = plugin_dir
 
-if lib64 == ""
-  bash "Fix nrpe startup script" do
-    code <<-'EOH'
+  if lib64 == ""
+    bash "Fix nrpe startup script" do
+      code <<-'EOH'
 killall nrpe
 sed -ie "s/\(.*start_daemon.*\)/\1\n\tpidof nrpe > \$PIDDIR\/nrpe.pid/g" /etc/init.d/nagios-nrpe-server
 EOH
-    not_if "grep -q pidof /etc/init.d/nagios-nrpe-server"
+      not_if "grep -q pidof /etc/init.d/nagios-nrpe-server"
+    end
   end
-end
 
-# Set directory ownership and permissions
-remote_directory plugin_dir do
-  source "plugins"
-  owner "nagios"
-  group "nagios"
-  mode 0755
-  files_mode 0755
+  # Set directory ownership and permissions
+  remote_directory plugin_dir do
+    source "plugins"
+    owner "nagios"
+    group "nagios"
+    mode 0755
+    files_mode 0755
+  end
 end
 
 # NTP server setup
@@ -104,48 +108,49 @@ ntp_servers = "127.0.0.1" if node[:ntp].nil? or node[:ntp][:ntp_servers].nil? or
 
 own_admin_ip = Chef::Recipe::Barclamp::Inventory.get_network_by_type(node, "admin").address
 
-# common
-vars = { :lib64 => lib64, :mon_host => mon_host, :provisioner_ip => provisioner_ip, :domain_name => domain_name, :admin_interface => admin_interface, :plugin_dir => plugin_dir, :own_admin_ip => own_admin_ip}
-# ntp
-vars.merge!({:ntp_servers => ntp_servers})
- 
-template "/etc/nagios/nrpe.cfg" do
-  source "nrpe.cfg.erb"
-  owner "nagios"
-  group "nagios"
-  mode "0644"
-  variables(vars)
-  notifies :restart, "service[nagios-nrpe-server]"
-end
+unless node[:platform] == "windows"
+  # common
+  vars = { :lib64 => lib64, :mon_host => mon_host, :provisioner_ip => provisioner_ip, :domain_name => domain_name, :admin_interface => admin_interface, :plugin_dir => plugin_dir, :own_admin_ip => own_admin_ip}
+  # ntp
+  vars.merge!({:ntp_servers => ntp_servers})
 
-# Set file ownership and permissions
-file "#{plugin_dir}/check_dhcp" do
-  mode "4755"
-  owner "root"
-  group "root"
-end
+  template "/etc/nagios/nrpe.cfg" do
+    source "nrpe.cfg.erb"
+    owner "nagios"
+    group "nagios"
+    mode "0644"
+    variables(vars)
+    notifies :restart, "service[nagios-nrpe-server]"
+  end
 
-# Set file ownership and permissions
-file "#{plugin_dir}/check_apt" do
-  mode "4755"
-  owner "root"
-  group "root"
-end
+  # Set file ownership and permissions
+  file "#{plugin_dir}/check_dhcp" do
+    mode "4755"
+    owner "root"
+    group "root"
+  end
 
-# Service startup definition
-service "nagios-nrpe-server" do
-  service_name nrpe_svc_name
-  action :enable
-  supports :restart => true, :reload => true
-end
+  # Set file ownership and permissions
+  file "#{plugin_dir}/check_apt" do
+    mode "4755"
+    owner "root"
+    group "root"
+  end
 
-# Fix rabbit tests
-bash "replace parts of alertness tools" do
-  code <<-'EOH'
+  # Service startup definition
+  service "nagios-nrpe-server" do
+    service_name nrpe_svc_name
+    action :enable
+    supports :restart => true, :reload => true
+  end
+
+  # Fix rabbit tests
+  bash "replace parts of alertness tools" do
+    code <<-'EOH'
 sed -ie "s/Management: Web UI/RabbitMQ Management/g" /usr/lib/nagios/plugins/check_rabbitmq_aliveness
 exit 0
 EOH
-  action :run
+    action :run
+  end
 end
-
 
