@@ -33,10 +33,9 @@ locale_additions:
   en:
     barclamp:
       nagios:
-        edit_attributes: 
-          attributes: Attributes
-        edit_deployment: 
-          deployment: Deployment
+        edit_attributes:
+          monitor_raid: Monitor RAID
+          monitor_ipmi: Monitor IPMI
 
 debs:
   ubuntu-10.10:
