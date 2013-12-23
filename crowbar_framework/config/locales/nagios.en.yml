@@ -1,0 +1,6 @@
+en:
+  barclamp:
+    nagios:
+      edit_attributes:
+        monitor_raid: Monitor RAID
+        monitor_ipmi: Monitor IPMI
