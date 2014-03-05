@@ -20,6 +20,24 @@ class NagiosService < ServiceObject
     @logger = thelogger
   end
 
+  class << self
+    def role_constraints
+      @role_constraints ||= begin
+        {
+          "nagios-server" => {
+            "unique" => true,
+            "count" => 1,
+            "admin" => true
+          },
+          "nagios-client" => {
+            "unique" => true,
+            "count" => -1
+          }
+        }
+      end
+    end
+  end
+
   def create_proposal
     @logger.debug("Nagios create_proposal: entering")
     base = super

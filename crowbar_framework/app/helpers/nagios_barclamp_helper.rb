@@ -18,17 +18,4 @@
 #
 
 module NagiosBarclampHelper
-  def nagios_role_contraints
-    {
-      "nagios-server" => {
-        "unique" => true,
-        "count" => 1,
-        "admin" => true
-      },
-      "nagios-client" => {
-        "unique" => true,
-        "count" => -1
-      }
-    }
-  end
 end
