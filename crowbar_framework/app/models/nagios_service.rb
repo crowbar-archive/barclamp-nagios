@@ -22,19 +22,17 @@ class NagiosService < ServiceObject
 
   class << self
     def role_constraints
-      @role_constraints ||= begin
-        {
-          "nagios-server" => {
-            "unique" => true,
-            "count" => 1,
-            "admin" => true
-          },
-          "nagios-client" => {
-            "unique" => true,
-            "count" => -1
-          }
+      {
+        "nagios-server" => {
+          "unique" => true,
+          "count" => 1,
+          "admin" => true
+        },
+        "nagios-client" => {
+          "unique" => true,
+          "count" => -1
         }
-      end
+      }
     end
   end
 
