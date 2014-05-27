@@ -15,7 +15,10 @@
 
 
 class NagiosController < BarclampController
-  def initialize
+
+  protected
+
+  def initialize_service
     @service_object = NagiosService.new logger
   end
 end
