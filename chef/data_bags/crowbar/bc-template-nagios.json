@@ -12,6 +12,7 @@
   "deployment": {
     "nagios": {
       "crowbar-revision": 0,
+      "crowbar-applied": false,
       "element_states": {
         "nagios-server": [ "readying", "ready", "applying" ],
         "nagios-client": [ "readying", "ready", "applying" ]

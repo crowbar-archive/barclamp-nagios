@@ -27,7 +27,7 @@ crowbar:
   order: 60
   run_order: 60
   chef_order: 1050
-  proposal_schema_version: 2
+  proposal_schema_version: 3
 
 debs:
   ubuntu-10.10:
