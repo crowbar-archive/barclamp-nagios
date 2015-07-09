@@ -63,7 +63,7 @@ class NagiosService < ServiceObject
     #
     if state == "discovered"
       @logger.debug("Nagios transition: discovered state for #{name} for #{state}")
-      db = ProposalObject.find_proposal "nagios", inst
+      db = Proposal.where(barclamp: "nagios", name: inst).first
       role = RoleObject.find_role_by_name "nagios-config-#{inst}"
 
       if role.override_attributes["nagios"]["elements"]["nagios-server"].nil? or
