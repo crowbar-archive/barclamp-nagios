@@ -136,7 +136,7 @@ define service {
 define service {
     service_description Crowbar Web Server
     hostgroup_name      provisioner-server
-    check_command       check_tcp!3000
+    check_command       check_tcp!80
     use                 default-service
 }
 define service {
